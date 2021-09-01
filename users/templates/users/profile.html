@@ -2,7 +2,7 @@
 
 
 {% extends "blog/base.html" %}
-
+{% load crispy_forms_tags %}
 {% block content%}
 
     <div class="content-section">
@@ -12,6 +12,25 @@
                 <h2 class="account-heading">{{user.username}}</h2>
                 <p class="text-secondary">{{user.email}}</p>
             </div>
+        </div>
+
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="from-group">
+                <legend class="border-bottom mb-4">
+                    Update Info
+                </legend>
+               {{ u_form|crispy  }}
+               {{ p_form|crispy  }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Update</button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Already Have An Account? <a href="{% url 'login'%}" class="ml-2">Sign in</a>
+            </small>
         </div>
     </div>
         
