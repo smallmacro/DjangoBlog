@@ -12,3 +12,15 @@ New concepts used:
   - Resize the uploaded image by overriding the `save()` method in `Profile` Class using the `user.profile.image.path`
   - Decorator `@login_required` from `from django.contrib.auth.decorators` used  when displaying user profile
   - `enctype="multipart/form-data"` needed to save image file by form POST method
+
+
+### Day 10 Updates:
+Implement the blog post list,post detail,post create,post update, post delete by using class based view (`ListView`,`DeteailView`,`CreateView`,`UpdateView`,`DeleteView`)
+
+New concepts introduced:
+  - Classes inheriting from class-based view have its default attribute and method as well as its default template name.
+      1. `ListView` and `DetailView` will search for `<app_name>/<model_name>_viewtype.html`, while `CreateView` and `Update` will locate `<app_name>/<model_name>_form.html`, `DeleteView` will look for `<app_name>/<model_name>_confirm_delete.html`.
+      2. `model = <Model_name>` is the same with `query_set = <Model_name>.objects.all()`, 'fields' will indicate the form fields in the `UpdateView` and `CreateView`
+      3. After creating a post, the `Post` should define its `get_absolute_url`toindicate the url that will redirect to.
+      4. When updating and creating a post, need to set the author of the post  to the login user(Foreign Key) within the overriding `form_valid()`method
+      

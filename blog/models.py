@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User #one to many relationship
+from django.urls import reverse
 # Create your models here.
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -11,3 +12,7 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    # This method will get the url after a instance is created
+    def get_absolute_url(self):
+        return reverse('blog:post-detail', kwargs={'pk':self.id})
