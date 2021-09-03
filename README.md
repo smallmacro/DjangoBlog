@@ -24,4 +24,15 @@ New concepts introduced:
       3. After creating (`CreateView`)a post, the `Post` should define its `get_absolute_url`to indicate the url that will redirect to.
       4. When updating and creating a post, need to set the author of the post  to the login user(Foreign Key) within the overriding `form_valid()`method.
       5. `UpdateView` and `DeleteView` need to require the user authentication in which the author of post needs to be equal with the login user. `UserPassesTestMixin` and overriding `test_func()` do the job.
+
+
+### Day 11 updates:
+Introduce  and implement the pagination in Blog. Create new `ListView` with custom filted queries and an useful route for posts written by specific author.
+
+new concepts:
+- `django.views.generic.list.ListView` provides a builtin way to paginate the displayed list. You can do this by adding a `paginate_by` attribute to your view class.This limits the number of objects per page and adds a `paginator` and `page_obj` to the context.`ordering` can indicate the displaying sequence.
+
+- By overriding the `get_queryset()` method, we can add customized filter to the object in the context. Paring with defining filter route, we can implement other customized filter . 
+
+
       
