@@ -29,7 +29,7 @@ New concepts introduced:
 ### Day 11 updates:
 Introduce  and implement the pagination in Blog. Create new `ListView` with custom filted queries and an useful route for posts written by specific author.
 
-new concepts:
+New concepts:
 - `django.views.generic.list.ListView` provides a builtin way to paginate the displayed list. You can do this by adding a `paginate_by` attribute to your view class.This limits the number of objects per page and adds a `paginator` and `page_obj` to the context.`ordering` can indicate the displaying sequence.
 
 - By overriding the `get_queryset()` method, we can add customized filter to the object in the context. Paring with defining filter route, we can implement other customized filter . 
@@ -40,12 +40,13 @@ Email and password reset.Send a email with a link to reset password to gmail acc
 
 Mail is sent using the SMTP host and port specified in the `EMAIL_HOST` and `EMAIL_PORT` settings. The `EMAIL_HOST_USER` and `EMAIL_HOST_PASSWORD` settings, if set, are used to authenticate to the SMTP server, and the `EMAIL_USE_TLS` and `EMAIL_USE_SSL` settings control whether a secure connection is used.
 
-new concepts:
+New concepts:
 - `PasswordResetView` from auth.views : reset password through email 
 - `PasswordResetDoneView` from auth.views : indicate the action when the request is done.
 - `PasswordResetConfirmView`  : this view generates `uidb64` and `token`parameters for security check every time. So the route needs to consider these parameters.
 - `PasswordResetCompleteView` show the render template when the reset is complete. 
 - The email that the reset link will send to must be the same with user.email inthe database. Otherwise, Django will not send the email.
+- set environment variable .`conda env config vars [list/set/unset]` and reactivate the environment to make  changes take effect.
 
 #### Need to improve:
 1. Support user to change user's password. `PasswordChangeView` can handle this issue.
