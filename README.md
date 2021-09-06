@@ -49,6 +49,48 @@ New concepts:
 - set environment variable .`conda env config vars [list/set/unset]` and reactivate the environment to make  changes take effect.
 
 #### Need to improve:
-1. Support user to change user's password. `PasswordChangeView` can handle this issue.
 
       
+
+
+### Day 13 updates:
+How to deploy the application to web server. [Django deployment checklist](https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/)
+Options:
+1. Linux server:([Linode](https://linode.com/coreyschafer))
+   - The first thing we need to do is set up the remote server environment:`adduser`,change directory and files mode, collect the package requirement and dependency. 
+   - Install webserver: `Apache` or `nginx`. `sudo apt-get install apache2`,`sudo apt-get install libapache2-mod-wsgi-py3`.
+   - Then configure the webserver: `cd /etc/apache2/sites-avaiable` and copy the `000-default.conf` to project directory and rename `project_name.conf`.Set `Alias /static  /home/<username>/<project_name>/static`
+   - Add <Directory <path_topath>> Require all granted </Directory>  `static`,`media`,`wsgi.py`,  `WSGIScriptAlias / <full_path_to_wsgi.py>` , `WSGIDaemon Process django_app python-path=<full_path_to> pyt$ python-home=<full_path_to_enve>`  ,`WSGIProcessGroup django_app`
+   -  `sudo a2ensite <django_project_name>` enable the site and disable the `000-default.conf`
+   - change the owner of `<project_name>/db.sqlite3` : `sudo chown :www-data <project_name>/db.sqlite3` and `sudo chmod 664 <project_name>/db.sqlite3` and change the group owner to `www-data` : `sudo chown :www-data <project_name>`.And the same process to `media` folder .
+   
+Setting changes in Django project:
+1. `ALLOW_HOSTS`
+2. In production, we need to set up the `STATIC_ROOT`= `os.path.join(BASE_DIR,'static')` and run `pyhton manage.py collectstatic`
+3. create a configure json file to handle secret info:`SECRET_KEY` and the environment variables `EMAIL_USER`, `EMAIL_PASS` in this project.
+4. load the json file in `settings.py` : 
+     ```python
+     with open('<JSON_FILE>') as config_file:
+        config = json.load(config_file)
+     ```
+5. Set `SECRET_KEY = congif['SECRET_KEY']`, `DEBUG=False` and update other environment virables(`EMAIL_USER` and `EMAIL_PASS`) 
+
+
+
+
+### Day 14&15 updates:
+Use a custom domain name for our application and enbale HTTPS with a free SSL/TLS Certificate using [Let's Encrypt](https://letsencrypt.org/) 
+1. register a domain, set the domain DNS server. and add DNS records(`*`,`www`) in server manager.
+2. add the domain name to `ALLOWED_HOSTS` in `settings.py`
+3. [Start](https://letsencrypt.org/getting-started/) to select the webserver framework and operating system. [Get your site on HTTPS](https://certbot.eff.org/). Follow the instructions to install neccessary packages.
+4. Update the Apache configure file: `<project_name>.conf`: add the `ServerName :....`  comment out the `WSGISCriptAlias`,`WSGIDaemonProcess`, `WSGIProcessGroup`
+5. `sudo cerbot --apache`  
+6. add the `https` to utf allow.
+7. Since the certificate needs to be renewed every 90 days, so we need to automatically renew the task: 
+       ```shell
+       sudo cerbot renew --dry-run
+       sudo crontab -e
+       #m h dom mon dow   command
+       30 4 1 * * sudo cerbot renew --quiet
+
+       ```
