@@ -120,27 +120,53 @@ Need to remove the `save()`method in `users` models since the `Pillow` conflicts
 #### Deploy the application using Heroku.
 [Configuring Django Apps for Heroku](https://devcenter.heroku.com/articles/django-app-configuration)
 
-First, and most importantly, Heroku web applications require a `Procfile`.
+Remember to add `sudo` when facing permission denied issues!!!
+
+set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file.
+
+##### Steps:
+1. [Download and install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+
+2. Login `sudo heroku login`(Open the browser to login) or `sudo heroku login -i`(Login in the CLI)
+
+3. Create the `runtime.txt`  in root app directory to specify the python version
+
+4. Upload the `requirements.txt` which tell 'Heroku' to install all packages needed to deploy the application. Every time install a new package we need to addit in the `requirements.txt`
+
+```txt
+django==3.1.2
+dj-database-url==0.5.0
+django-crispy-forms==1.12.0
+django-heroku
+```
+
+5. Most importantly, Heroku web applications require a `Procfile`.
 This file is used to explicitly declare your application’s process types and entry points. It is located in the root of your repository.This Procfile requires `Gunicorn`, the production web server that we recommend for Django applications.
+
 
 Set `Procfile`:
 ```
 web:gunicorn <project_name>.wsgi
 
 ```
+```
+Be sure to add gunicorn to your requirements.txt file as well.
+
+```
 
 
-On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
+6. On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
 
 Django-heroku Installer: `conda install -c conda-forge django-heroku`
 
-
 ```
-Be sure to add django-heroku,gunicorn to your requirements.txt file as well.
+Be sure to add django-heroku to your requirements.txt file as well.
 
 ```
 Set heroku configure: `heroku config:set <VARS_NAME> = <VARS_VALUE>`
+
 Add the following `import` statement to the top of settings.py:
+
 ```python
 import django_heroku
 # Activate Django-Heroku.
@@ -161,23 +187,16 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 ```
+
 Django won’t automatically create the target directory (STATIC_ROOT) that collectstatic uses, if it isn’t available. You may need to create this directory in your codebase, so it will be available when collectstatic is run. Git does not support empty file directories, so you will have to create a file inside that directory as well.
 
-set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file.
 
 
-Set `STATIC_ROOT`
+7. We use `sqlite3` in development environment and transfer to `Postgres` in production. `heroku addons:create ` can create any database heroku supports.
+`heroku pg` will show the detail about `postgresql` heroku has installed
 
-
-Add the `<project_name>.herokuapp.com` to `ALLOWED_HOSTS`
-
-
-We use `sqlite3` in development environment and transfer to `Postgres` in production
-
-`heroku addons:create `
-`heroku pg` and `django_heroku(local())` 
-
-`heroku run python manage.py migrate` or 
+`heroku run python manage.py migrate` can migrate the database tables that already exists in the dev environment. 
+or use the heroku bash command line:
 ```sh
    heroku run bash
    python manage.py createsuperuser
@@ -185,26 +204,18 @@ We use `sqlite3` in development environment and transfer to `Postgres` in produc
    heroku open
 
 ```
-#### Conda Environment Buildpack 
-Create a new Heroku app using this buildpack like this:
-`heroku create --buildpack https://github.com/conda/conda-buildpack.git`
-You can also add it to upcoming builds of an existing application:
-```python
- heroku config:add BUILDPACK_URL=https://github.com/conda/conda-buildpack.git
 
-```
-You can test that this is running conda managed Python like this:
-```python
-heroku run python
-Running `python` attached to terminal... up, run.7018
-Python 2.7.9 |Continuum Analytics, Inc.| (default, Dec 15 2014, 10:33:51)
-[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux2
-Type "help", "copyright", "credits" or "license" for more information.
-Anaconda is brought to you by Continuum Analytics.
-Please check out: http://continuum.io/thanks and https://binstar.org
->>>
 
-```
+
+
+
+
+8. Add the `<project_name>.herokuapp.com` to `ALLOWED_HOSTS`
+
+
+
+
+
 
 
 
