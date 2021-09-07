@@ -1,0 +1,17 @@
+name: Django
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - django
+  - git
+  - django-crispy-forms
+  - pillow
+  - postgresql
+  - gunicorn
+  - django-heroku
+variables:
+  EMAIL_PASS: 
+  EMAIL_USER: 
+prefix: /opt/anaconda3/envs/Django
