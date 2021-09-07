@@ -122,10 +122,10 @@ Need to remove the `save()`method in `users` models since the `Pillow` conflicts
 
 Remember to add `sudo` when facing permission denied issues!!!
 
-set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file.
+
 
 ##### Steps:
-1. [Download and install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
+1. [Download and install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) 
 
 2. Login `sudo heroku login`(Open the browser to login) or `sudo heroku login -i`(Login in the CLI)
 
@@ -140,7 +140,12 @@ django-crispy-forms==1.12.0
 django-heroku
 ```
 
-5. Most importantly, Heroku web applications require a `Procfile`.
+5. install and use `git`.set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file. Commit all the file to local tree. 
+
+Then `sudo heroku create <app_name>`, when creating is done, it will return the app url(`sudo heroku open`).
+    `git push heroku main` will push the files to the heroku remote,it will intall all packages in `requirements.txt`.
+
+6. Most importantly, Heroku web applications require a `Procfile`.
 This file is used to explicitly declare your application’s process types and entry points. It is located in the root of your repository.This Procfile requires `Gunicorn`, the production web server that we recommend for Django applications.
 
 
@@ -155,7 +160,7 @@ Be sure to add gunicorn to your requirements.txt file as well.
 ```
 
 
-6. On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
+7. On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
 
 Django-heroku Installer: `conda install -c conda-forge django-heroku`
 
@@ -192,7 +197,7 @@ Django won’t automatically create the target directory (STATIC_ROOT) that coll
 
 
 
-7. We use `sqlite3` in development environment and transfer to `Postgres` in production. `heroku addons:create ` can create any database heroku supports.
+8. We use `sqlite3` in development environment and transfer to `Postgres` in production. `heroku addons:create ` can create any database heroku supports.
 `heroku pg` will show the detail about `postgresql` heroku has installed
 
 `heroku run python manage.py migrate` can migrate the database tables that already exists in the dev environment. 
@@ -210,10 +215,10 @@ or use the heroku bash command line:
 
 
 
-8. Add the `<project_name>.herokuapp.com` to `ALLOWED_HOSTS`
+9. Add the `<project_name>.herokuapp.com` to `ALLOWED_HOSTS`
 
 
-
+10. View information about your running app using one of the logging commands,` heroku logs --tail`:
 
 
 
