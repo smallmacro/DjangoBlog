@@ -1,4 +1,6 @@
 # DjangoBlog
+The `environment.yml` indicates the tools I used in this practice.
+
 This project is my second django project. It is a step-by-step practice associtated to the [youtube tutorial by Corey Schafer](https://www.youtube.com/playlist?list=PL-osiE80TeTtoQCKZ03TU5fNfx2UY6U4p).
 
 The author tries to introduce the some common concepts within django framework and guide audiences to build a blog system hand-by-hand. [Source code](https://github.com/CoreyMSchafer/code_snippets/tree/master/Django_Blog) .
@@ -87,10 +89,137 @@ Use a custom domain name for our application and enbale HTTPS with a free SSL/TL
 5. `sudo cerbot --apache`  
 6. add the `https` to utf allow.
 7. Since the certificate needs to be renewed every 90 days, so we need to automatically renew the task: 
-       ```shell
+
+       ```sh
        sudo cerbot renew --dry-run
        sudo crontab -e
        #m h dom mon dow   command
        30 4 1 * * sudo cerbot renew --quiet
-
+       
        ```
+
+
+### Day 16 updates:
+Using AWS S3 for File Uploads.[Django storage S3 Docs](https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html)
+
+Save the secret info from AWS S3 in the configure file.
+Change the `settings.py`:
+```python
+# add the INSTALLED_APP: storages
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_ACCESS_ACCESS_KEY = os.environ.get('AWS_ACCESS_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+AWS_S3_FILE_OVERWRITE =  False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+``` 
+Need to remove the `save()`method in `users` models since the `Pillow` conflicts with usage of AWS S3 storages.
+
+#### Deploy the application using Heroku.
+[Configuring Django Apps for Heroku](https://devcenter.heroku.com/articles/django-app-configuration)
+
+First, and most importantly, Heroku web applications require a `Procfile`.
+This file is used to explicitly declare your application’s process types and entry points. It is located in the root of your repository.This Procfile requires `Gunicorn`, the production web server that we recommend for Django applications.
+
+Set `Procfile`:
+```
+web:gunicorn <project_name>.wsgi
+
+```
+
+
+On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
+
+Django-heroku Installer: `conda install -c conda-forge django-heroku`
+
+
+```
+Be sure to add django-heroku,gunicorn to your requirements.txt file as well.
+
+```
+Set heroku configure: `heroku config:set <VARS_NAME> = <VARS_VALUE>`
+Add the following `import` statement to the top of settings.py:
+```python
+import django_heroku
+# Activate Django-Heroku.
+django_heroku.settings(locals())
+
+
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+```
+Django won’t automatically create the target directory (STATIC_ROOT) that collectstatic uses, if it isn’t available. You may need to create this directory in your codebase, so it will be available when collectstatic is run. Git does not support empty file directories, so you will have to create a file inside that directory as well.
+
+set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file.
+
+
+Set `STATIC_ROOT`
+
+
+Add the `<project_name>.herokuapp.com` to `ALLOWED_HOSTS`
+
+
+We use `sqlite3` in development environment and transfer to `Postgres` in production
+
+`heroku addons:create `
+`heroku pg` and `django_heroku(local())` 
+
+`heroku run python manage.py migrate` or 
+```sh
+   heroku run bash
+   python manage.py createsuperuser
+   exit
+   heroku open
+
+```
+#### Conda Environment Buildpack 
+Create a new Heroku app using this buildpack like this:
+`heroku create --buildpack https://github.com/conda/conda-buildpack.git`
+You can also add it to upcoming builds of an existing application:
+```python
+ heroku config:add BUILDPACK_URL=https://github.com/conda/conda-buildpack.git
+
+```
+You can test that this is running conda managed Python like this:
+```python
+heroku run python
+Running `python` attached to terminal... up, run.7018
+Python 2.7.9 |Continuum Analytics, Inc.| (default, Dec 15 2014, 10:33:51)
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+Anaconda is brought to you by Continuum Analytics.
+Please check out: http://continuum.io/thanks and https://binstar.org
+>>>
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
