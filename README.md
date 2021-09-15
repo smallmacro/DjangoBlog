@@ -127,12 +127,29 @@ Remember to add `sudo` when facing permission denied issues!!!
 ##### Steps:
 1. [Download and install the Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) 
 
-2. Login `sudo heroku login`(Open the browser to login) or `sudo heroku login -i`(Login in the CLI)
+2. [Get a Heroku acount](https://www.heroku.com/) and Login `sudo heroku login`(Open the browser to login) or `sudo heroku login -i`(Login in the CLI)
 
-3. Create the `runtime.txt`  in root app directory to specify the python version
+3. Create and upload the website.
+```sh
+    heroku create <app_name>
+```
+This creates a git remote ("pointer to a remote repository") named `heroku` in our local git environment.
 
-4. Upload the `requirements.txt` which tell 'Heroku' to install all packages needed to deploy the application. Every time install a new package we need to addit in the `requirements.txt`
 
+4. Push file to Heroku
+```sh
+    git push heroku main
+```
+will push the files to the heroku remote,it will intall all packages in `requirements.txt`. 
+
+In order to execute your application `Heroku` needs to be able to set up the appropriate environment and dependencies, and also understand how it is launched. For Django apps we provide this information in a number of text files:
+
+   - `runtime.txt`: the programming language and version to use.
+   - `requirements.txt`: the Python component dependencies, including Django.
+   - `Procfile`: A list of processes to be executed to start the web application. For Django this will usually be the Gunicorn web application server (with a .wsgi script).
+   - `wsgi.py`: WSGI configuration to call our Django application in the Heroku environment.
+
+`requirements.txt`:
 ```txt
 django==3.1.2
 dj-database-url==0.5.0
@@ -140,12 +157,7 @@ django-crispy-forms==1.12.0
 django-heroku
 ```
 
-5. install and use `git`.set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file. Commit all the file to local tree. 
-
-Then `sudo heroku create <app_name>`, when creating is done, it will return the app url(`sudo heroku open`).
-    `git push heroku main` will push the files to the heroku remote,it will intall all packages in `requirements.txt`.
-
-6. Most importantly, Heroku web applications require a `Procfile`.
+Most importantly, Heroku web applications require a `Procfile`.
 This file is used to explicitly declare your application’s process types and entry points. It is located in the root of your repository.This Procfile requires `Gunicorn`, the production web server that we recommend for Django applications.
 
 
@@ -154,13 +166,15 @@ Set `Procfile`:
 web:gunicorn <project_name>.wsgi
 
 ```
+
 ```
 Be sure to add gunicorn to your requirements.txt file as well.
 
 ```
+5. install and use `git`.set `.gitignore` file [Github gitignore](https://github.com/github/gitignore/blob/master/Python.gitignore) add `.DS_Store` to ignore file. Commit all the file to local tree. 
 
 
-7. On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
+6. On Heroku, sensitive credentials are stored in the environment as `config vars`.The `django-heroku` package automatically configures your Django application to work on Heroku. It is compatible with Django 2.0 applications.
 
 Django-heroku Installer: `conda install -c conda-forge django-heroku`
 
@@ -210,16 +224,24 @@ or use the heroku bash command line:
 
 ```
 
-
-
-
-
-
 9. Add the `<project_name>.herokuapp.com` to `ALLOWED_HOSTS`
 
 
-10. View information about your running app using one of the logging commands,` heroku logs --tail`:
+10. Debugging.The Heroku client provides a few tools for debugging:
+```sh
 
+# Show current logs
+heroku logs
+
+# Show current logs and keep updating with any new results
+heroku logs --tail
+
+# Add additional logging for collectstatic (this tool is run automatically during a build)
+heroku config:set DEBUG_COLLECTSTATIC=1
+
+# Display dyno status
+heroku ps
+```
 
 
 
